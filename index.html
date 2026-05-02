@@ -44,14 +44,14 @@
   /* Knife Cursor */
   .knife-cursor {
     position: fixed;
-    width: 60px;
-    height: 60px;
-    font-size: 50px;
+    width: 70px;
+    height: 70px;
+    font-size: 60px;
     pointer-events: none;
     z-index: 10000;
     display: none;
     transform: translate(-50%, -50%) rotate(-45deg);
-    transition: transform 0.1s;
+    transition: transform 0.05s linear;
     text-shadow: 0 0 15px rgba(0,0,0,0.5);
   }
   .cake-screen:hover .knife-cursor { display: block; }
@@ -512,6 +512,38 @@
   @keyframes floatUpBalloon { 0% { transform: translateY(0) rotate(0deg); opacity: 1;} 100% { transform: translateY(-120vh) rotate(20deg); opacity: 0;} }
   
   .balloon { position: fixed; bottom: -100px; font-size: 45px; animation: floatUpBalloon 7s ease-in forwards; z-index: 99; pointer-events: none;}
+
+  /* Final Message Box */
+  #final-love-msg {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: rgba(26, 10, 16, 0.95);
+    backdrop-filter: blur(20px);
+    border: 2px solid #ffb199;
+    border-radius: 25px;
+    padding: 40px;
+    width: 90%;
+    max-width: 500px;
+    z-index: 2000;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(255, 8, 68, 0.5);
+    display: none;
+    opacity: 0;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  #final-love-msg.active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    display: block;
+  }
+  .love-text {
+    font-family: var(--font-cursive);
+    font-size: 1.8rem;
+    line-height: 1.6;
+    color: #fff;
+    margin-bottom: 20px;
+  }
 </style>
 </head>
 <body>
@@ -607,7 +639,8 @@
 
     <!-- Audio Elements -->
     <audio id="bgMusicAuto" src="video/HBD.mp4" loop></audio>
-    <audio id="instrumental" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>
+
+    <!-- DASHBOARD MENU -->
 
     <!-- DASHBOARD MENU -->
     <div class="main-page-body">
@@ -767,6 +800,16 @@
       <button class="btn" onclick="celebrateAgain()">Celebrate! 🎉</button>
     </div>
 
+    <!-- Final Romantic Message Modal -->
+    <div id="final-love-msg">
+      <div class="love-text">
+        Baby I love you romantically happy birthday to you... ❤️<br><br>
+        Kya bole tumko but itna bolenge tumhara support bahut imp hai meri life mein... aise hi sath dete raho. ✨<br><br>
+        Aur is baar jyada kuch kar nahi paye sorry... 🥺 par paakaa promise jaise sab thik hoga we will celebrate it properly! 🫂💖
+      </div>
+      <button class="btn" onclick="document.getElementById('final-love-msg').classList.remove('active')">Love You Too! ❤️</button>
+    </div>
+
   </div>
 </div>
 
@@ -827,10 +870,10 @@ function moveKnife(e) {
 
 function goToCake() {
   showScreen('2-5');
-  const inst = document.getElementById('instrumental');
-  if(inst) {
-    inst.volume = 0.5;
-    inst.play().catch(e => console.log('Instrumental blocked'));
+  const autoMusic = document.getElementById('bgMusicAuto');
+  if(autoMusic) {
+    autoMusic.volume = 0.85;
+    autoMusic.play().catch(e => console.log('Music blocked'));
   }
 }
 
@@ -885,12 +928,9 @@ function cutCake(el) {
   document.getElementById('cake-msg').innerText = "Happy Birthday Baby! 🎉❤️";
   
   // Start Music precisely at cake cut
-  const inst = document.getElementById('instrumental');
-  if(inst) inst.pause();
-  
   const autoMusic = document.getElementById('bgMusicAuto');
-  if(autoMusic) {
-    autoMusic.volume = 0.9;
+  if(autoMusic && autoMusic.paused) {
+    autoMusic.volume = 1.0;
     autoMusic.play().catch(e => console.log('Autoplay blocked'));
   }
   
@@ -1174,6 +1214,13 @@ function triggerBalloons() {
 function celebrateAgain() {
   triggerConfetti();
   triggerBalloons();
+  
+  // Show romantic message after 2 seconds of celebration
+  setTimeout(() => {
+    const msg = document.getElementById('final-love-msg');
+    msg.style.display = 'block';
+    setTimeout(() => msg.classList.add('active'), 50);
+  }, 2000);
 }
 
 function showLoveMessage(el, msg) {
