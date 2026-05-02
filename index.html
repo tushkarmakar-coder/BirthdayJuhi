@@ -310,9 +310,9 @@
   .bunting {
     width: 100%; text-align: center; font-size: 28px; margin-top: 20px; letter-spacing: 10px; z-index: 10; position: relative;
   }
-  .hero { display: flex; flex-direction: column; align-items: center; padding-top: 30px; text-align: center; z-index: 10; position: relative; }
-  .hero-title-cursive { font-family: var(--font-cursive); font-size: 5rem; margin: 0; line-height: 0.8; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: white;}
-  .hero-title-bold { font-family: var(--font-elegant); font-size: 5.5rem; font-weight: bold; margin: 0; text-transform: uppercase; letter-spacing: 3px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: white;}
+  .hero { display: flex; flex-direction: column; align-items: center; padding: 40px 10px; text-align: center; z-index: 10; position: relative; width: 100%; box-sizing: border-box; overflow: hidden; }
+  .hero-title-cursive { font-family: var(--font-cursive); font-size: 4rem; margin: 0; line-height: 0.8; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: white; width: 100%; }
+  .hero-title-bold { font-family: var(--font-elegant); font-size: 4.5rem; font-weight: bold; margin: 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: white; width: 100%; overflow-wrap: break-word; }
   
   /* Dashboard Layout */
   .main-page-body {
@@ -532,7 +532,7 @@
     <div class="bounce-cake">🎂</div>
     <div class="oops-title">Oops! Looks like today is your Birthday!</div>
     <div class="oops-sub">Anniversary data nahi mili... but found something better 👀</div>
-    <button class="btn" onclick="showScreen('2-5')">Dekho kya hai →</button>
+    <button class="btn" onclick="goToCake()">Dekho kya hai →</button>
   </div>
 
   <!-- SCREEN 2-5: Cake Cutting -->
@@ -605,8 +605,11 @@
       </div>
     </div>
 
-    <!-- Hidden BG audio that plays from loading screen -->
-      <!-- DASHBOARD MENU -->
+    <!-- Audio Elements -->
+    <audio id="bgMusicAuto" src="video/HBD.mp4" loop></audio>
+    <audio id="instrumental" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>
+
+    <!-- DASHBOARD MENU -->
     <div class="main-page-body">
       <div class="dashboard-grid">
         
@@ -740,7 +743,6 @@
       </div>
     </div>
 
-    <!-- Section 5: Song -->
     <div id="overlay-song" class="section-overlay">
       <button class="back-btn" onclick="closeSection('song')">←</button>
       <h2 class="overlay-title">🎵 Our Special Song</h2>
@@ -758,13 +760,6 @@
         </div>
       </div>
     </div>
-audio/Juhi_Baby_Crazy.mp3.mpeg" loop></audio>
-          </div>
-        </div>
-      </div>
-
-      </div><!-- end RIGHT column cards-container -->
-    </div><!-- end main-page-body -->
 
     <div class="final-section">
       <h2 style="font-family: var(--font-elegant); font-size: 3rem; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Happy Birthday Baby! 🎂</h2>
@@ -825,8 +820,18 @@ function createTrailContainer() {
 // Knife Movement
 function moveKnife(e) {
   const knife = document.getElementById('knife-cursor');
+  if(!knife) return;
   knife.style.left = e.clientX + 'px';
   knife.style.top = e.clientY + 'px';
+}
+
+function goToCake() {
+  showScreen('2-5');
+  const inst = document.getElementById('instrumental');
+  if(inst) {
+    inst.volume = 0.5;
+    inst.play().catch(e => console.log('Instrumental blocked'));
+  }
 }
 
 // Loading Screen
@@ -880,6 +885,9 @@ function cutCake(el) {
   document.getElementById('cake-msg').innerText = "Happy Birthday Baby! 🎉❤️";
   
   // Start Music precisely at cake cut
+  const inst = document.getElementById('instrumental');
+  if(inst) inst.pause();
+  
   const autoMusic = document.getElementById('bgMusicAuto');
   if(autoMusic) {
     autoMusic.volume = 0.9;
